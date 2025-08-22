@@ -1,3 +1,5 @@
+'use client'
+
 import { CreateTabForm } from '@/components/create-tab-form'
 
 export default function Home() {
