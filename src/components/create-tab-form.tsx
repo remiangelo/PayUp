@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export function CreateTabForm() {
   const [name, setName] = useState('')
+  const [creatorName, setCreatorName] = useState('')
   const [currency, setCurrency] = useState('USD')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -21,7 +22,7 @@ export function CreateTabForm() {
       const response = await fetch('/api/tabs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, currency })
+        body: JSON.stringify({ name, currency, creator_name: creatorName })
       })
 
       if (!response.ok) throw new Error('Failed to create tab')
@@ -51,6 +52,16 @@ export function CreateTabForm() {
               placeholder="e.g., Roommates, Japan Trip"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="creatorName">Your Name</Label>
+            <Input
+              id="creatorName"
+              placeholder="Enter your name"
+              value={creatorName}
+              onChange={(e) => setCreatorName(e.target.value)}
               required
             />
           </div>
