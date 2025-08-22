@@ -25,6 +25,45 @@ export function IOUsList({ tabId, currency }: IOUsListProps) {
   const [ious, setIOUs] = useState<IOU[]>([])
   const [loading, setLoading] = useState(true)
 
+  const fetchIOUs = async () => {
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      
+      const { data, error } = await supabase
+        .from('ious')
+        .select(`
+          id,
+          description,
+          amount,
+          created_at,
+          participants!ious_payer_id_fkey(name)
+        `)
+        .eq('tab_id', tabId)
+        .order('created_at', { ascending: false })
+        .limit(10)
+
+      if (error) {
+        console.error('Error fetching IOUs:', error)
+      } else if (data) {
+        const formattedData: IOU[] = data.map((item) => ({
+          id: item.id || '',
+          description: item.description || '',
+          amount: item.amount || 0,
+          created_at: item.created_at || '',
+          payer: {
+            name: (item as { participants?: { name?: string } }).participants?.name || 'Unknown'
+          }
+        }))
+        setIOUs(formattedData)
+      }
+    } catch (error) {
+      console.error('Error fetching IOUs:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     fetchIOUs()
     
@@ -58,37 +97,8 @@ export function IOUsList({ tabId, currency }: IOUsListProps) {
     return () => {
       cleanup.then(fn => fn())
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabId])
-
-  const fetchIOUs = async () => {
-    try {
-      const { createClient } = await import('@/lib/supabase/client')
-      const supabase = createClient()
-      
-      const { data, error } = await supabase
-        .from('ious')
-        .select(`
-          id,
-          description,
-          amount,
-          created_at,
-          payer:participants!ious_payer_id_fkey(name)
-        `)
-        .eq('tab_id', tabId)
-        .order('created_at', { ascending: false })
-        .limit(10)
-
-      if (error) {
-        console.error('Error fetching IOUs:', error)
-      } else {
-        setIOUs(data || [])
-      }
-    } catch (error) {
-      console.error('Error fetching IOUs:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const formatAmount = (amount: number) => {
     const currencySymbols: Record<string, string> = {
