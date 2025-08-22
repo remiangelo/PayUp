@@ -75,3 +75,10 @@ ANTHROPIC_API_KEY=your_claude_key
 - Fixed SQL schema view error
 - Resolved Git permissions issue
 - Successfully deployed to Vercel
+- Fixed 404 error by moving Next.js app from tabby/ subdirectory to repository root
+- Added vercel.json configuration for proper deployment
+- Fixed 401 authentication errors:
+  - Tab creation now creates creator as first participant with cookie
+  - Added creator_name field to tab creation form
+  - Set explicit cookie path '/' for Vercel compatibility
+  - Updated both /api/tabs and /api/tabs/[code]/join routes
