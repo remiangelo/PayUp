@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from 'react'
 import { JoinTabForm } from '@/components/join-tab-form'
 import { BalancesList } from '@/components/balances-list'
+import { IOUsList } from '@/components/ious-list'
 import { AddIouDialog } from '@/components/add-iou-dialog'
 import { SettleDialog } from '@/components/settle-dialog'
 import { RoastButton } from '@/components/roast-button'
@@ -230,6 +231,11 @@ export default function TabPage({ params }: { params: Promise<{ code: string }> 
               </div>
             </CardContent>
           </Card>
+
+          <IOUsList 
+            tabId={data.tab.id}
+            currency={data.tab.currency}
+          />
 
           <BalancesList 
             edges={data.edges} 
